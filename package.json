@@ -13,6 +13,7 @@
     "cheerio": "^1.0.0-rc.12",
     "node-fetch": "^3.3.2",
     "vue": "^3.3.11",
+    "vue-carousel": "^0.18.0",
     "vue-i18n": "^9.13.0"
   },
   "devDependencies": {
