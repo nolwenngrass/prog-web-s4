@@ -139,7 +139,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('updatedTodayContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
@@ -219,7 +219,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('popularContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
@@ -299,7 +299,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('randomContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
@@ -379,7 +379,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('finishedContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
@@ -459,7 +459,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('forbiddenEighteenContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
@@ -539,7 +539,7 @@
           <img src="./assets/no_content.jpg" alt="No content" class="noContent">
           <div class="webtoon-details">
             <p class="webtoon-author">{{ $t('forbiddenFifteenContentNone') }}</p>
-            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+            <a href="#list-of-webtoons" class="read-now-button">{{ $t('readNow') }}</a>
           </div>
         </div>
       </div>
