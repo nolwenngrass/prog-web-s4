@@ -15,7 +15,7 @@
     <body>
       
       <!-- Menu principal -->
-      <nav class="main-menu">
+      <nav class="main-menu menu-container">
         <ul>
           <li>
             <a href="#updated-today">
@@ -63,53 +63,486 @@
       </nav>
 
       <!-- Contenu principal -->
+
       <h1 id="updated-today">{{ $t('updatedToday') }}</h1>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
-      <p>il faut que webtoon.updateDays corresponde au jour qu'il est le jour où on va sur la page</p>
+      <div v-if="updatedTodayWebtoons.length > 0">
+        <p>{{ $t('updatedTodayContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in updatedTodayWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('updatedTodayContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="the-most-popular">{{ $t('theMostPopular') }}</h1>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
-      <p>titre 2 : les plus populaires -> il faut qu'ils aient le plus grand nombre de fans</p>
+      <div v-if="popularWebtoons.length > 0">
+        <p>{{ $t('popularContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in popularWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('popularContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="i-discover">{{ $t('iDiscover') }}</h1>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
-      <p>titre 3 : je découvre -> aléatoire parmi tous les webtoons, aucun critère particulier</p>
+      <div v-if="randomWebtoons.length > 0">
+        <p>{{ $t('randomContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in randomWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('randomContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="finished-but-quality">{{ $t('finishedButQuality') }}</h1>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
-      <p>titre 4 : terminé mais toujours de qualité -> webtoon.updateDays('finished')</p>
+      <div v-if="finishedWebtoons.length > 0">
+        <p>{{ $t('finishedContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in finishedWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('finishedContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="forbidden-18">{{ $t('forbiddenForUnder18s') }}</h1>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
-      <p>titre 5 : interdit aux moins de 18 ans -> webtoon.additional.adult est vrai</p>
+      <div v-if="forbiddenEighteenWebtoons.length > 0">
+        <p>{{ $t('forbiddenEighteenContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in forbiddenEighteenWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('forbiddenEighteenContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="forbidden-15">{{ $t('forbiddenForUnder15s') }}</h1>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
-      <p>titre 6 : interdit aux moins de 15 ans -> webtoon.additional.singularityList.includes('over15')</p>
+      <div v-if="forbiddenFifteenWebtoons.length > 0">
+        <p>{{ $t('forbiddenFifteenContent') }}</p>
+        <div class="webtoon-list">
+          <div class="webtoon-grid">
+            <div v-for="(webtoon, index) in forbiddenFifteenWebtoons" :key="index" class="webtoon-item">
+              <div class="webtoon-card">
+                <!-- Thumbnail du webtoon -->
+                <div class="webtoon-thumbnail">
+                  <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                  <!-- Image sensitive_content.png -->
+                  <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
+                    <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
+                  </div>
+                </div>
+                <!-- Détails du webtoon -->
+                <div class="release-date">
+                  <img v-if="webtoon.updateDays.includes('naverDaily')" src="./assets/naver_daily_logo.png" alt="{{ $t('naverDaily') }}">
+                  <img v-else-if="webtoon.updateDays.includes('finished')" src="./assets/check_mark.webp" alt="Check mark">
+                  <img v-else src="./assets/calendar.webp" alt="Calendar">
+                  <p v-if="!webtoon.updateDays.includes('finished') && !webtoon.updateDays.includes('naverDaily')" class="webtoon-update-days">{{ webtoon.updateDays.join(', ') }}</p>
+                </div>
+                <!-- Images interdites en haut à gauche -->
+                <div v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')" class="topics">
+                  <img v-if="webtoon.additional.adult" src="./assets/forbidden_under_18.png" alt="{{ $t('forbiddenForUnder18s') }}" class="forbidden-image">
+                  <img v-else-if="webtoon.additional.singularityList.includes('over15')" src="./assets/forbidden_under_15.png" alt="{{ $t('forbiddenForUnder15s') }}" class="forbidden-image">
+                </div>
+                <div class="webtoon-details">
+                  <h2 class="webtoon-title">{{ webtoon.title }}</h2>
+                  <p class="webtoon-author">
+                    <span v-if="webtoon.author.includes(',')">
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                      <img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[1] }}
+                    </span>
+                    <span v-else>
+                      <img src="./assets/author_icon.png" alt="{{ $t('author') }}"><img src="./assets/artist_icon.png" alt="{{ $t('artist') }}"> {{ splitAuthors(webtoon.author)[0] }}
+                    </span>
+                  </p>
+                  <div class="container">
+                    <div class="btns">
+                      <button class="topics">
+                        <p class="keyword">{{ webtoon.fanCount }} {{ $t('fans') }}</p>
+                      </button>
+                      <button v-if="webtoon.update" class="topics">
+                        <p class="keyword">{{ $t('update') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('waitFree')" class="topics">
+                        <p class="keyword">{{ $t('waitFree') }}</p>
+                      </button>
+                      <button v-if="webtoon.additional.singularityList.includes('Free')" class="topics">
+                        <p class="keyword">{{ $t('free') }}</p>
+                      </button>
+                      <button v-if="webtoon.service === 'kakao'" class="topics kakao-button">
+                        <img src="./assets/kakao_logo.png" alt="{{ $t('kakao') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'naver'" class="topics naver-button">
+                        <img src="./assets/naver_logo.png" alt="{{ $t('naver') }}" class="service-image">
+                      </button>
+                      <button v-else-if="webtoon.service === 'kakaoPage'" class="topics kakaoPage-button">
+                        <img src="./assets/kakao_page_logo.png" alt="{{ $t('kakaoPage') }}" class="service-image">
+                      </button>
+                    </div>
+                  </div>
+                  <a :href="webtoon.url" target="_blank" rel="noopener noreferrer" class="read-now-button">{{ $t('readNow') }}</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div v-else>
+        <div class="webtoon-card-no-content">
+          <img src="./assets/no_content.jpg" alt="No content" class="noContent">
+          <div class="webtoon-details">
+            <p class="webtoon-author">{{ $t('forbiddenFifteenContentNone') }}</p>
+            <a href="#listOfWebtoons" class="read-now-button">{{ $t('readNow') }}</a>
+          </div>
+        </div>
+      </div>
 
       <h1 id="list-of-webtoons">{{ $t('listOfWebtoons') }}</h1>
       <div class="filters">
@@ -157,7 +590,7 @@
             <div class="webtoon-card">
               <!-- Thumbnail du webtoon -->
               <div class="webtoon-thumbnail">
-                <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }" ref="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
+                <img :src="webtoon.img" :alt="webtoon.title" :class="{ 'blurry-background': webtoon.additional.adult || webtoon.additional.singularityList.includes('over15') }">
                 <!-- Image sensitive_content.png -->
                 <div class="sensitive-content" v-if="webtoon.additional.adult || webtoon.additional.singularityList.includes('over15')">
                   <img src="./assets/sensitive_content.png" alt="Sensitive Content" @click="hideBlurredImage" ref="sharpOverlayImage">
@@ -234,12 +667,12 @@ export default {
       webtoonsFromAPI: [],
       currentPage: 0,
       totalPages: 1,
-      sortBy: "title", // Tri par défaut par titre (ordre alphabétique)
+      sortBy: "title",
       filterByService: "",
       filterByUpdateDay: "",
       filterByAdultContent: "",
       filterByNew: "",
-      selectedLanguage: 'en', // Langue par défaut
+      selectedLanguage: 'en',
     };
   },
   computed: {
@@ -263,14 +696,12 @@ export default {
         } else if (this.filterByAdultContent === "singularityList.includes('over15')") {
           filtered = filtered.filter(webtoon => webtoon.additional.singularityList.includes('over15'));
         } else if (this.filterByAdultContent === "false") {
-          // Pas besoin de filtre supplémentaire, car "Everyone" inclut tous les contenus
         }
       }
       if (this.filterByNew !== "") {
         filtered = filtered.filter(webtoon => webtoon.additional.new === (this.filterByNew === "true"));
       }
 
-      // Tri des webtoons en fonction de l'option de tri sélectionnée
       if (this.sortBy === "title") {
         filtered.sort((a, b) => a.title.localeCompare(b.title));
       } else if (this.sortBy === "author") {
@@ -280,18 +711,80 @@ export default {
       }
 
       return filtered;
-    }
+    },
+    updatedTodayWebtoons() {
+      let filtered = this.webtoonsFromAPI;
+      
+      const currentDayIndex = new Date().getDay();
+      const daysOfWeek = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
+      const currentDay = daysOfWeek[currentDayIndex];
+      
+      filtered = filtered.filter(webtoon => webtoon.updateDays == currentDay);
+
+      return filtered.slice(0, 5);
+    },
+    popularWebtoons() {
+      let filtered = this.webtoonsFromAPI;
+      
+      filtered.sort((a, b) => b.fanCount - a.fanCount);
+      
+      return filtered.slice(0, 5);
+    },
+    randomWebtoons() {
+      let filtered = this.webtoonsFromAPI.filter(webtoon => {
+        return webtoon.additional.adult !== 'true' && !webtoon.additional.singularityList.includes('over15');
+      });
+
+      const randomWebtoons = [];
+      const numWebtoons = filtered.length;
+      const numRandom = Math.min(5, numWebtoons);
+
+      const randomIndexes = [];
+      while (randomIndexes.length < numRandom) {
+        const randomIndex = Math.floor(Math.random() * numWebtoons);
+        if (!randomIndexes.includes(randomIndex)) {
+          randomIndexes.push(randomIndex);
+        }
+      }
+
+      randomIndexes.forEach(index => {
+        randomWebtoons.push(filtered[index]);
+      });
+
+      return randomWebtoons;
+    },
+    finishedWebtoons() {
+      let filtered = this.webtoonsFromAPI;
+      
+      filtered = filtered.filter(webtoon => webtoon.updateDays == 'finished');
+
+      return filtered.slice(0, 5);
+    },
+    forbiddenEighteenWebtoons() {
+      let filtered = this.webtoonsFromAPI;
+      
+      filtered = filtered.filter(webtoon => webtoon.additional.adult == '1');
+
+      return filtered.slice(0, 5);
+    },
+    forbiddenFifteenWebtoons() {
+      let filtered = this.webtoonsFromAPI;
+      
+      filtered = filtered.filter(webtoon => webtoon.additional.singularityList.includes('over15') == '1');
+
+      return filtered.slice(0, 5);
+    },
   },
   methods: {
     changeLanguage() {
-      this.$i18n.locale = this.selectedLanguage; // Change la langue en fonction de la sélection de l'utilisateur
+      this.$i18n.locale = this.selectedLanguage;
     },
     async fetchWebtoons() {
       try {
         while (this.currentPage < this.totalPages) {
           const response = await fetch(`https://korea-webtoon-api.herokuapp.com?page=${this.currentPage}`);
           if (!response.ok) {
-            throw new Error(`Erreur lors de la récupération des webtoons de la première API: ${response.statusText}`);
+            throw new Error(`Error retrieving webtoons from the API: ${response.statusText}`);
           }
           const data = await response.json();
           this.webtoonsFromAPI.push(...data.webtoons);
@@ -299,20 +792,18 @@ export default {
           this.currentPage++;
         }
       } catch (error) {
-        console.error('Erreur lors de la récupération des webtoons :', error.message);
+        console.error('Error when retrieving webtoons:', error.message);
       }
     },
     applyFilters() {
-      // Les filtres sont déjà appliqués par computed property filteredWebtoons
+      
     },
     splitAuthors(authorString) {
       return authorString.split(',').map(part => part.trim());
     },
     hideBlurredImage(event) {
       console.log("hideBlurredImage method is called");
-      // Masquer l'image floue au clic de la souris
       event.target.style.display = 'none';
-      // Masquer l'image floue au clic de la souris
       event.target.parentElement.parentElement.querySelector('.blurry-background').classList.remove('blurry-background');
     },
     saveDataLocally() {
@@ -323,18 +814,17 @@ export default {
       if (storedWebtoons) {
         this.webtoonsFromAPI = JSON.parse(storedWebtoons);
       } else {
-        // Si aucune donnée n'est trouvée dans le stockage local, charger les données depuis l'API
         this.fetchWebtoons();
       }
     }
   },
   async mounted() {
-    this.loadDataFromLocalStorage(); // Charger les données depuis le stockage local au montage du composant
+    this.loadDataFromLocalStorage();
   },
   watch: {
     webtoonsFromAPI: {
       handler() {
-        this.saveDataLocally(); // Sauvegarder les données dans le stockage local à chaque modification
+        this.saveDataLocally();
       },
       deep: true
     }
@@ -343,11 +833,9 @@ export default {
 </script>
 
 <style scoped>
-/* Import des polices et des icônes */
 @import url(//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css);
 @import url(https://fonts.googleapis.com/css?family=Titillium+Web:300);
 
-/* Définition de la taille de police relative */
 html {
   font-size: 16px;
 }
@@ -374,6 +862,12 @@ a:hover,a:focus {
 .main-menu:hover,nav.main-menu.expanded {
   width:250px;
   overflow:visible;
+}
+
+.menu-container {
+  display: flex;
+  align-items: center;
+  height: 100vh;
 }
 
 .main-menu {
@@ -458,7 +952,6 @@ nav.main-menu li.active>a {
   background-color:#000000;
 }
 
-/* Styles pour les boutons de filtre */
 select,
 option {
   font-size: 1em;
@@ -470,7 +963,6 @@ option {
   margin-right: 0.625em;
 }
 
-/* Styles pour le header */
 header,
 footer,
 body {
@@ -488,14 +980,12 @@ body {
   padding-left: 3.75em;
 }
 
-/* Styles pour le contenu principal */
 .webtoon-list {
   max-width: 75em;
   margin: 0 auto;
   padding: 1.25em;
 }
 
-/* Styles pour la grille de webtoons dans chaque section */
 .webtoon-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(10.625em, 1fr));
@@ -506,7 +996,7 @@ body {
   position: relative;
 }
 
-.webtoon-card {
+.webtoon-card,.webtoon-card-no-content {
   position: relative;
   z-index: 1;
   background-color: rgba(255, 255, 255, 0.8);
@@ -514,20 +1004,26 @@ body {
   overflow: hidden;
   box-shadow: 0 0 1.25em rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  max-height: 40em;
+  max-width: 12em;
 }
 
-.webtoon-card:hover {
+.webtoon-card-no-content {
+  width:12em;
+}
+
+.webtoon-card:hover,.webtoon-card-no-content:hover {
   transform: translateY(-0.3125em);
 }
 
-.hovered .webtoon-card {
+.hovered .webtoon-card,.hovered .webtoon-card-no-content {
   transform: translateY(-0.3125em);
 }
 
 .webtoon-thumbnail {
-  width: 100%;
-  height: auto;
-  border-radius: 0.625em;
+  max-width: 12em;
+  max-height: 20em;
+  border-radius: 0.625em 0.625em 0em 0em;
   position: relative;
   overflow: hidden;
 }
@@ -539,8 +1035,6 @@ body {
   transition: filter 0.3s ease;
 }
 
-
-/* Styles pour les jours de mise à jour */
 .webtoon-update-days {
   position: absolute;
   top: 50%;
@@ -571,7 +1065,6 @@ body {
   filter: blur(2.5em);
 }
 
-/* Styles pour les cases */
 .webtoon-details {
   position: relative;
 }
@@ -670,7 +1163,6 @@ button.topics:active {
   transform: translateY(0.1875em);
 }
 
-/* Styles pour les boutons de plateforme spécifiques */
 button.kakao-button {
   background-color: #000;
 }
@@ -691,7 +1183,7 @@ button.kakaoPage-button {
 
 .read-now-button {
   display: block;
-  margin-top: auto; /* Place le bouton en bas de la carte */
+  margin-top: auto;
   padding: 0.625em 1.25em;
   background-color: #212121;
   color: #999;
@@ -708,6 +1200,15 @@ button.kakaoPage-button {
   background-color: #000;
   color: #fff;
   text-decoration: none;
+}
+
+.noContent {
+  width: 100%;
+  border-radius: 0.625em;
+  position: relative;
+  overflow: hidden;
+  border-radius: 0.625em 0.625em 0em 0em;
+  transition: filter 0.3s ease;
 }
 
 </style>
