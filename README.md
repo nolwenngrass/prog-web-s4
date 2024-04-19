@@ -1,29 +1,9 @@
 # nolwenn-grass-projet-prog-web
 
-This template should help get you started developing with Vue 3 in Vite.
+Utiliser App2.vue au lieu de App.vue pour que la traduction fonctionne. Il semble y avoir une erreur dans la partie de l'html qui gère l'affichage des webtoons correspondant à cette catégorie...
 
-## Recommended IDE Setup
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vitejs.dev/config/).
-
-## Project Setup
-
-```sh
-npm install
-```
-
-### Compile and Hot-Reload for Development
-
+### pour compiler
 ```sh
 npm run dev
-```
-
-### Compile and Minify for Production
-
-```sh
-npm run build
 ```
