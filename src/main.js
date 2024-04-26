@@ -7,6 +7,8 @@ const i18n = createI18n({
   messages: {
     en: {
         header: 'Tooniverse',
+        headerImg: 'logo.png',
+        headerImgFav: 'favicon.png',
         updatedToday: 'Updated today',
         theMostPopular: 'The most popular',
         iDiscover: 'I discover',
@@ -70,6 +72,9 @@ const i18n = createI18n({
         readNow: 'Read now',
     },
     fr: {
+        header: 'Tooniverse',
+        headerImg: 'logo.png',
+        headerImgFav: 'favicon.png',
         updatedToday: 'Mis à jour aujourd\'hui',
         theMostPopular: 'Les plus populaires',
         iDiscover: 'Je découvre',
@@ -107,6 +112,7 @@ const i18n = createI18n({
         sat: 'Samedi',
         sun: 'Dimanche',
         finished: 'Terminé',
+        naverDaily: 'Naver Daily+',
 
         all: 'Tout',
         noAgeRestrictions: 'Sans restrictiton d\'âge',
@@ -133,6 +139,8 @@ const i18n = createI18n({
     },
     kr: {
         header: '투니버스',
+        headerImg: 'logo_kr.png',
+        headerImgFav: 'favicon_kr.png',
         updatedToday: '오늘 업데이트됨',
         theMostPopular: '가장 인기 있는',
         iDiscover: '나는 발견한다',

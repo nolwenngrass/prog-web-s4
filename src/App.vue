@@ -1,7 +1,8 @@
 <template>
   <div>
     <header>
-      <h1>{{ $t('header') }}</h1>
+      <img v-if="windowWidth >= 768" :src="'/src/assets/' + $t('headerImg')" :alt="$t('header')" class="logo-img">
+      <img v-else :src="'/src/assets/' + $t('headerImgFav')" :alt="$t('header')" class="logo-img">
       <!-- Sélecteur de langue -->
       <div class="language-selector">
         <select id="lang" v-model="selectedLanguage" @change="changeLanguage">
@@ -673,6 +674,7 @@ export default {
       filterByAdultContent: "",
       filterByNew: "",
       selectedLanguage: 'en',
+      windowWidth: window.innerWidth,
     };
   },
   computed: {
@@ -724,7 +726,7 @@ export default {
       return filtered.slice(0, 5);
     },
     popularWebtoons() {
-      let filtered = this.webtoonsFromAPI;
+      let filtered = this.webtoonsFromAPI.slice();
       
       filtered.sort((a, b) => b.fanCount - a.fanCount);
       
@@ -816,7 +818,16 @@ export default {
       } else {
         this.fetchWebtoons();
       }
+    },
+    handleResize() {
+    this.windowWidth = window.innerWidth;
     }
+  },
+  created() {
+    window.addEventListener('resize', this.handleResize);
+  },
+  beforeDestroy() {
+    window.removeEventListener('resize', this.handleResize);
   },
   async mounted() {
     this.loadDataFromLocalStorage();
@@ -978,6 +989,10 @@ footer {
 
 body {
   padding-left: 3.75em;
+}
+
+.logo-img {
+  width: 20vw;
 }
 
 .webtoon-list {
